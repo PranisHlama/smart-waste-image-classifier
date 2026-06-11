@@ -22,6 +22,49 @@ Build an image classification system that classifies waste images into categorie
 - Interpreting classification metrics
 
 
+# Repo Structure
+```
+smart-waste-classifier/
+│
+├── data/
+│   ├── metadata/
+│   │   └── waste-classification-metadata.json
+│   │
+│   ├── images/
+│   │   ├── img_001.jpg
+│   │   ├── img_002.jpg
+│   │   ├── ...
+│   │
+│   ├── train/
+│   ├── validation/
+│   └── test/
+│
+├── notebooks/
+│   ├── 01_explore_dataset.ipynb
+│   ├── 02_custom_cnn.ipynb
+│   └── 03_transfer_learning.ipynb
+│
+├── src/
+│   ├── data_loader.py
+│   ├── preprocessing.py
+│   ├── train.py
+│   ├── evaluate.py
+│   └── predict.py
+│
+├── models/
+│
+├── results/
+│   ├── metrics/
+│   ├── confusion_matrix/
+│   └── plots/
+│
+├── streamlit_app/
+│
+├── docs/
+│
+└── README.md
+```
+
 # Integration
 Here’s a complete **no-code roadmap** for building your Smart Waste Image Classifier project.
 
@@ -174,6 +217,15 @@ Make sure labels match folder names
 Remove corrupted or unreadable images
 
 For pretrained models like ResNet or MobileNet, 224 × 224 is usually standard.
+
+To generate augmented training images, run:
+
+```bash
+python src/augment_images.py --source data/train --output data/train_augmented
+```
+
+Use augmentation only for the training set. Keep `data/validation` and `data/test`
+unchanged so evaluation reflects real unseen images.
 
 ---
 
