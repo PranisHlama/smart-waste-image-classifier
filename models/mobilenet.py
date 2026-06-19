@@ -6,8 +6,8 @@ from tensorflow.keras import models, layers
 from sklearn.metrics import classification_report, confusion_matrix
 
 IMG_SIZE = (224, 224)
-BATCH_SIZE = 32
-EPOCHS = 6
+BATCH_SIZE = 100
+EPOCHS = 5
 
 TRAIN_DIR = '../data/train_augmented'
 VAL_DIR = '../data/validation'
@@ -86,7 +86,7 @@ model = models.Sequential([
 # Compile 
 model.compile(
     optimizer="adam",
-    loss="categorical_crossentropy",
+    loss="sparse_categorical_crossentropy",
     metrics=["accuracy"]
 )
 

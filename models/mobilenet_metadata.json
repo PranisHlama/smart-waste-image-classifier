@@ -1,0 +1,18 @@
+{
+    "class_names": [
+        "1-Cardboard",
+        "2-Food Organics",
+        "3-Glass",
+        "4-Metal",
+        "5-Miscellaneous Trash",
+        "6-Paper",
+        "7-Plastic",
+        "8-Textile Trash",
+        "9-Vegetation"
+    ],
+    "image_size": [
+        224,
+        224
+    ],
+    "preprocessing": "tf.keras.applications.mobilenet_v2.preprocess_input"
+}
