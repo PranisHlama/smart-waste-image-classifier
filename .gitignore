@@ -1,0 +1,44 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Local config and secrets
+.env
+.env.*
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Generated datasets from local preprocessing scripts
+data/train/
+data/validation/
+data/test/
+data/train_augmented/
+
+# Model and training artifacts
+*.h5
+*.keras
+*.ckpt
+checkpoints/
+logs/
+results/
+
+# Generated plots/images
+models/img/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
