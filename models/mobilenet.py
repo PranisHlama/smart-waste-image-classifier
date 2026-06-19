@@ -1,5 +1,6 @@
 import json
 import time
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras import models, layers
 from sklearn.metrics import classification_report, confusion_matrix
@@ -111,4 +112,34 @@ test_loss, test_accuracy = model.evaluate(test_ds, verbose=2)
 print(f"Test Loss: {test_loss:.4f}")
 print(f"Test accuracy: {test_accuracy:.4f}")
 
+# Precision Recall F1-Score and confusion matrix
+y_true = []
+y_pred = []
 
+for images, labels in test_ds:
+    predictions = model.predict(images)
+    predicted_classes = np.argmax(predictions, axis=1)
+
+    y_true.extend(labels.numpy())
+    y_pred.extend(predicted_classes)
+
+print("Classification Report:")
+print(classification_report(y_true, y_pred, target_names=class_names))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_true, y_pred))
+
+model.save("mobilenet_waste_classifier.keras")
+
+metadata = {
+    "class_names": class_names,
+    "image_size": IMG_SIZE,
+    "preprocessing": "tf.keras.applications.mobilenet_v2.preprocess_input"
+}
+
+
+with open("mobilenet_metadata.json", "w") as f:
+    json.dump(metadata, f, indent=4)
+
+print("Saved model to mobilenet_waste_classifier.keras")
+print("Saved metadata to mobilenet_metadata.json")

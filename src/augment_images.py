@@ -7,6 +7,7 @@ from PIL import Image
 
 from preprocessing import IMAGE_EXTENSIONS, create_augmented_images
 
+IMAGE_PATH = "../data/train"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -14,18 +15,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--source",
-        default="data/train",
+        default= IMAGE_PATH,
         help="Class-folder dataset to augment. Usually data/train.",
     )
     parser.add_argument(
         "--output",
-        default="data/train_augmented",
+        default="../data/train_augmented",
         help="Directory where original and augmented images are saved.",
     )
     parser.add_argument(
-        "--include-originals",
+        "--skip-originals",
         action="store_true",
-        help="Copy original images into the output directory with augmented images.",
+        help="Only save augmented images, without copying original images.",
     )
     return parser.parse_args()
 
@@ -100,7 +101,7 @@ def main() -> None:
     total_saved = augment_dataset(
         source_dir=Path(args.source),
         output_dir=Path(args.output),
-        include_originals=args.include_originals,
+        include_originals=not args.skip_originals,
     )
     print(f"Done: saved {total_saved} images")
 

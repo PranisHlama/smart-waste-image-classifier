@@ -7,14 +7,14 @@ from pathlib import Path
 
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
-
+IMAGE_PATH = "../data/images"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Split class-folder image dataset into train/validation/test folders."
     )
-    parser.add_argument("--source", default="data/images", help="Source class-folder directory.")
-    parser.add_argument("--output", default="data", help="Directory where split folders are created.")
+    parser.add_argument("--source", default= IMAGE_PATH, help="Source class-folder directory.")
+    parser.add_argument("--output", default="../data", help="Directory where split folders are created.")
     parser.add_argument("--train", type=float, default=0.70, help="Training split ratio.")
     parser.add_argument("--validation", type=float, default=0.15, help="Validation split ratio.")
     parser.add_argument("--test", type=float, default=0.15, help="Test split ratio.")
