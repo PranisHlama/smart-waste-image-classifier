@@ -1,499 +1,198 @@
-# Track 1: Smart Waste Image Classifier
-## Objective
-Build an image classification system that classifies waste images into categories such as plastic, paper, metal, glass, and organic waste.
-## Technical Requirements
-- Implement a Convolutional Neural Network (CNN) model
-- Perform image preprocessing and augmentation
-- Use transfer learning (e.g., ResNet or MobileNet)
-- Compare at least two models (custom CNN vs pretrained model)
-- Evaluate using accuracy, precision, recall, F1-score, and confusion matrix
+# Smart Waste Image Classifier
 
+Smart Waste Image Classifier is a Python image classification project that predicts the waste category of an uploaded image. It includes data preparation scripts, image augmentation, a custom CNN model, a MobileNetV2 transfer-learning model, and a Streamlit demo app for testing predictions.
 
-## Deliverables
-- Trained model
-- Dataset description
-- Model comparison results
-- Demo application (optional but recommended using Streamlit)
-- Video of the running system
+The dataset is organized as class folders under `data/images` and currently contains 4,752 images across 9 classes:
 
-## Learning Outcomes
-- Understanding CNN architecture and layers
-- Applying transfer learning
-- Interpreting classification metrics
+- `1-Cardboard`
+- `2-Food Organics`
+- `3-Glass`
+- `4-Metal`
+- `5-Miscellaneous Trash`
+- `6-Paper`
+- `7-Plastic`
+- `8-Textile Trash`
+- `9-Vegetation`
 
+## Project Structure
 
-# Repo Structure
-```
-smart-waste-classifier/
-│
+```text
+.
+├── app.py                         # Streamlit prediction app
+├── config.py                      # Shared paths and training settings
+├── requirements.txt               # Python dependencies
 ├── data/
-│   ├── metadata/
-│   │   └── waste-classification-metadata.json
-│   │
-│   ├── images/
-│   │   ├── img_001.jpg
-│   │   ├── img_002.jpg
-│   │   ├── ...
-│   │
-│   ├── train/
-│   ├── validation/
-│   └── test/
-│
-├── notebooks/
-│   ├── 01_explore_dataset.ipynb
-│   ├── 02_custom_cnn.ipynb
-│   └── 03_transfer_learning.ipynb
-│
-├── src/
-│   ├── data_loader.py
-│   ├── preprocessing.py
-│   ├── train.py
-│   ├── evaluate.py
-│   └── predict.py
-│
+│   ├── images/                    # Original image dataset, stored with Git LFS
+│   ├── train/                     # Generated training split
+│   ├── validation/                # Generated validation split
+│   ├── test/                      # Generated test split
+│   └── train_augmented/           # Generated augmented training images
 ├── models/
-│
-├── results/
-│   ├── metrics/
-│   ├── confusion_matrix/
-│   └── plots/
-│
-├── streamlit_app/
-│
-├── docs/
-│
-└── README.md
+│   ├── cnn.py                     # Custom CNN training script
+│   ├── mobilenet.py               # MobileNetV2 training script
+│   ├── cnn.keras                  # Generated custom CNN model
+│   ├── mobilenet.keras            # Generated MobileNetV2 model
+│   ├── cnn_labels.txt             # Generated labels for the CNN model
+│   └── mobilenet_labels.txt       # Generated labels for the MobileNetV2 model
+└── src/
+    ├── augment_images.py          # Creates augmented training images
+    ├── preprocessing.py           # Image loading and augmentation helpers
+    ├── split_dataset.py           # Splits images into train/validation/test
+    └── train.py                   # Basic dataset loading check
 ```
 
-# Integration
-Here’s a complete **no-code roadmap** for building your Smart Waste Image Classifier project.
+Generated folders and model files may not exist until you run the preparation and training commands.
 
-## 1. Understand the project goal
+## Git LFS Dataset Files
 
-You are building a system that takes an image of waste and predicts its category, for example:
+The project images are tracked with Git LFS. The `.gitattributes` file marks `*.jpg` files as LFS objects, so a normal clone may only download small pointer files until LFS is installed and pulled.
 
-Plastic
-Paper
-Metal
-Glass
-Organic
-Cardboard
-Trash / other
-
-The project is mainly about learning **image classification using CNNs and transfer learning**.
-
----
-
-## 2. Learn the basic concepts first
-
-Before building, understand these topics:
-
-### Image classification
-
-A model receives an image and outputs one class label.
-
-Example:
-
-Input: bottle image
-Output: plastic
-
-### CNN
-
-A Convolutional Neural Network learns visual patterns such as edges, shapes, colors, and textures.
-
-Important CNN layers:
-
-Convolution layer
-ReLU activation
-Pooling layer
-Flatten layer
-Dense layer
-Dropout layer
-Softmax output layer
-
-### Transfer learning
-
-Instead of training from zero, you use a model already trained on millions of images, such as:
-
-ResNet
-MobileNet
-EfficientNet
-VGG16
-
-For this project, MobileNet is a good choice because it is lightweight and works well for demos.
-
----
-
-## 3. Find a dataset
-
-Search for datasets like:
-
-“Garbage classification dataset Kaggle”
-“TrashNet waste classification dataset”
-“Waste classification images dataset”
-“Recyclable and organic waste dataset”
-
-A good dataset should have folders like:
-
-```text
-dataset/
-  plastic/
-  paper/
-  metal/
-  glass/
-  organic/
-  cardboard/
-```
-
-Each folder should contain images of that class.
-
----
-
-## 4. Study your dataset
-
-Write a short dataset description for your report:
-
-Dataset name
-Source
-Number of classes
-Class names
-Number of images per class
-Image types
-Example images
-Any problems, such as imbalance or blurry images
-
-Example:
-
-```text
-The dataset contains images of waste items divided into plastic, paper, metal, glass, and organic categories. The images vary in lighting, background, object size, and orientation.
-```
-
----
-
-## 5. Organize the dataset
-
-Split the dataset into:
-
-Training set: 70 percent
-Validation set: 15 percent
-Test set: 15 percent
-
-Use training data to train the model.
-
-Use validation data to tune the model.
-
-Use test data only for final evaluation.
-
-Folder structure:
-
-```text
-data/
-  train/
-    plastic/
-    paper/
-    metal/
-  validation/
-    plastic/
-    paper/
-    metal/
-  test/
-    plastic/
-    paper/
-    metal/
-```
-
----
-
-## 6. Preprocess the images
-
-All images must be prepared before training.
-
-Do these steps:
-
-Resize all images to the same size, such as 224 × 224
-Convert images into arrays
-Normalize pixel values
-Make sure labels match folder names
-Remove corrupted or unreadable images
-
-For pretrained models like ResNet or MobileNet, 224 × 224 is usually standard.
-
-To generate augmented training images, run:
+Install Git LFS if needed:
 
 ```bash
-python src/augment_images.py --source data/train --output data/train_augmented
+git lfs install
 ```
 
-Use augmentation only for the training set. Keep `data/validation` and `data/test`
-unchanged so evaluation reflects real unseen images.
+After cloning the repository, download the actual image files:
 
----
-
-## 7. Apply image augmentation
-
-Image augmentation helps the model learn better by creating variations of training images.
-
-Use transformations like:
-
-Rotation
-Horizontal flip
-Zoom
-Brightness change
-Width and height shift
-Shear
-Random crop
-
-This helps the model recognize waste even when images are taken from different angles or lighting conditions.
-
----
-
-## 8. Build Model 1: Custom CNN
-
-Your first model should be a CNN built from scratch.
-
-Typical structure:
-
-Input image
-Convolution layer
-Pooling layer
-Convolution layer
-Pooling layer
-Convolution layer
-Pooling layer
-Flatten
-Dense layer
-Dropout
-Output layer with softmax
-
-Purpose of this model:
-
-Learn how CNNs work
-Understand layers
-Create a baseline result
-
-This model may not perform as well as transfer learning, but it is important for comparison.
-
----
-
-## 9. Build Model 2: Pretrained model
-
-Use transfer learning with a model like MobileNet or ResNet.
-
-Process:
-
-Load pretrained model
-Remove its original final classification layer
-Add your own output layer for waste classes
-Freeze early layers first
-Train only the new layers
-Then optionally unfreeze some deeper layers and fine-tune
-
-Recommended:
-
-Use MobileNetV2 for faster training and easier deployment.
-
----
-
-## 10. Train both models
-
-Train:
-
-Custom CNN
-Pretrained MobileNet / ResNet model
-
-For each model, record:
-
-Training accuracy
-Validation accuracy
-Training loss
-Validation loss
-Training time
-Number of epochs
-Final test accuracy
-
-Watch for overfitting.
-
-Overfitting means:
-
-Training accuracy is high
-Validation accuracy is much lower
-
-To reduce overfitting:
-
-Use augmentation
-Use dropout
-Use more data
-Reduce model complexity
-Use early stopping
-
----
-
-## 11. Evaluate the models
-
-Use these metrics:
-
-Accuracy
-Precision
-Recall
-F1-score
-Confusion matrix
-
-### Accuracy
-
-How many predictions were correct overall.
-
-### Precision
-
-When the model predicts “plastic,” how often is it actually plastic?
-
-### Recall
-
-Out of all real plastic images, how many did the model find?
-
-### F1-score
-
-Balance between precision and recall.
-
-### Confusion matrix
-
-Shows which classes are confused with each other.
-
-Example:
-
-The model may confuse plastic and glass because both can look shiny or transparent.
-
----
-
-## 12. Compare both models
-
-Create a comparison table:
-
-| Model       | Accuracy | Precision | Recall | F1-score | Notes                    |
-| ----------- | -------: | --------: | -----: | -------: | ------------------------ |
-| Custom CNN  |      78% |       77% |    76% |      76% | Simple but less accurate |
-| MobileNetV2 |      91% |       90% |    91% |      90% | Better performance       |
-
-Your conclusion should explain which model performed better and why.
-
-Usually, the pretrained model performs better because it already learned useful image features.
-
----
-
-## 13. Save the trained model
-
-After training, save your best model.
-
-You can save:
-
-Model file
-Class labels
-Image size used
-Preprocessing steps
-
-This is important because your demo app will need the saved model to make predictions.
-
----
-
-## 14. Build a demo app
-
-Use Streamlit for a simple demo.
-
-The app should allow the user to:
-
-Upload an image
-Preview the image
-Run prediction
-Show predicted class
-Show confidence score
-
-Example flow:
-
-Upload bottle image
-Model predicts: plastic
-Confidence: 94%
-
-Your app can also show a message like:
-
-```text
-This item is likely recyclable.
+```bash
+git lfs pull
 ```
 
----
+To confirm the dataset is available, check that the files under `data/images` are real JPG images rather than LFS pointer text files.
 
-## 15. Test the system manually
+## Requirements
 
-Try images from outside the dataset.
+- Python 3.11 or compatible Python 3 version
+- Git LFS
+- Enough disk space for the image dataset, augmented images, and trained model files
+- Optional but recommended: a virtual environment
 
-Test with:
+Install the Python dependencies with:
 
-Clear object images
-Messy background images
-Low-light images
-Multiple objects
-Similar-looking classes
+```bash
+python -m pip install -r requirements.txt
+```
 
-Record where the model performs well and where it fails.
+If your system has both Python 2 and Python 3 installed, use `python3` instead of `python`.
 
----
+## Setup From a Fresh Clone
 
-## 16. Make the video demo
+1. Clone the repository.
 
-Your video should show:
+```bash
+git clone <repository-url>
+cd smart_waste_image_classifier
+```
 
-Project title
-Dataset overview
-Training results
-Model comparison
-Streamlit app running
-Image upload
-Prediction result
-Short explanation of conclusion
+2. Install and pull Git LFS files.
 
-Keep it simple and clean.
+```bash
+git lfs install
+git lfs pull
+```
 
----
+3. Create and activate a virtual environment.
 
-## 17. Final report structure
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-Use this structure:
+On Windows PowerShell:
 
-1. Introduction
-2. Objective
-3. Dataset description
-4. Preprocessing and augmentation
-5. Custom CNN model
-6. Transfer learning model
-7. Training process
-8. Evaluation metrics
-9. Model comparison
-10. Demo application
-11. Challenges
-12. Conclusion
-13. Future improvements
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
----
+4. Install dependencies.
 
-## 18. Future improvements
+```bash
+python -m pip install -r requirements.txt
+```
 
-You can mention:
+5. Split the original dataset into training, validation, and test folders.
 
-Use larger dataset
-Add more waste categories
-Improve image quality
-Use object detection for multiple waste items
-Deploy on mobile
-Add recycling instructions
-Use real-time camera prediction
+```bash
+python src/split_dataset.py --overwrite
+```
 
----
+By default this creates:
 
-## Suggested learning order
+- `data/train`
+- `data/validation`
+- `data/test`
 
-First learn CNN basics.
-Then learn image preprocessing.
-Then train a custom CNN.
-Then learn transfer learning.
-Then compare results.
-Then build the Streamlit demo.
+The default split is 70% training, 15% validation, and 15% test.
 
-Think of it like sorting a messy recycling bin: first understand the objects, then teach the machine to see the difference. 🧃📦
+6. Create augmented training images.
+
+```bash
+python src/augment_images.py --include-originals
+```
+
+This writes augmented images to `data/train_augmented`. The training scripts use this folder.
+
+## Train the Models
+
+Train the MobileNetV2 transfer-learning model:
+
+```bash
+python models/mobilenet.py
+```
+
+This creates:
+
+- `models/mobilenet.keras`
+- `models/mobilenet_labels.txt`
+
+Train the custom CNN model:
+
+```bash
+python models/cnn.py
+```
+
+This creates:
+
+- `models/cnn.keras`
+- `models/cnn_labels.txt`
+
+MobileNetV2 usually gives better results because it starts from ImageNet pretrained weights. The custom CNN is included as a baseline model for comparison.
+
+## Run the Streamlit App
+
+After at least one model has been trained, start the demo app:
+
+```bash
+streamlit run app.py
+```
+
+Open the local URL printed by Streamlit, upload a waste image, and choose either `MobileNetV2` or `Custom CNN` from the model selector. If a selected model has not been trained yet, the app will show the training command needed for that model.
+
+## Common Workflow
+
+For a full run from prepared source images:
+
+```bash
+git lfs pull
+python -m pip install -r requirements.txt
+python src/split_dataset.py --overwrite
+python src/augment_images.py --include-originals
+python models/mobilenet.py
+streamlit run app.py
+```
+
+To also train the baseline CNN:
+
+```bash
+python models/cnn.py
+```
+
+## Notes
+
+- `data/images` is the original class-folder dataset.
+- `data/train`, `data/validation`, `data/test`, and `data/train_augmented` are generated from the original dataset.
+- `models/*.keras` and `models/*_labels.txt` are generated by training scripts.
+- The augmentation script creates horizontal flips, small rotations, brightness changes, and contrast changes.
+- The project uses 224 x 224 RGB images, configured in `config.py`.
