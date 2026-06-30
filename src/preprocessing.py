@@ -1,9 +1,11 @@
 from pathlib import Path
+import sys
 
 import numpy as np
 from PIL import Image, ImageEnhance, ImageOps
 
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from config import IMAGE_EXTENSIONS
 
 
 def load_image_as_array(image_path: Path, target_size: tuple[int, int] = (224, 224)) -> np.ndarray:

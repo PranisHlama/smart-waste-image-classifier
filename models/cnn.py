@@ -1,8 +1,13 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import matplotlib.pyplot as plt
+from pathlib import Path
+import sys
 
-df = '../data/train_augmented'
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from config import BATCH_SIZE, CNN_LABELS_PATH, CNN_MODEL_PATH, IMAGE_SIZE, MODELS_DIR, TRAIN_AUGMENTED_DIR
+
+df = str(TRAIN_AUGMENTED_DIR)
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
     df,
@@ -10,8 +15,8 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
     subset="training",
     labels="inferred",
     label_mode="int",
-    image_size=(224, 224),
-    batch_size=32,
+    image_size=IMAGE_SIZE,
+    batch_size=BATCH_SIZE,
     shuffle=True,
     seed=123
 )
@@ -22,8 +27,8 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
     subset="validation",
     labels="inferred",
     label_mode="int",
-    image_size=(224, 224),
-    batch_size=32,
+    image_size=IMAGE_SIZE,
+    batch_size=BATCH_SIZE,
     shuffle=True,
     seed=123
 )
@@ -41,12 +46,14 @@ for images, labels in train_ds.take(1):
         plt.grid(False)
         plt.imshow(images[i].numpy().astype("uint8"))
         plt.xlabel(class_names[labels[i]])
-plt.savefig("./img/cnn.png", dpi=300, bbox_inches="tight")
+plot_path = MODELS_DIR / "img" / "cnn.png"
+plot_path.parent.mkdir(parents=True, exist_ok=True)
+plt.savefig(plot_path, dpi=300, bbox_inches="tight")
 
 
 # Create Convolutional base
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(224, 224, 3)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(*IMAGE_SIZE, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
@@ -77,3 +84,9 @@ plt.legend(loc='lower right')
 test_loss, test_acc = model.evaluate(val_ds, verbose=2)
 
 print(test_acc)
+
+CNN_MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+model.save(CNN_MODEL_PATH)
+CNN_LABELS_PATH.write_text("\n".join(class_names), encoding="utf-8")
+print(f"Saved model: {CNN_MODEL_PATH}")
+print(f"Saved labels: {CNN_LABELS_PATH}")

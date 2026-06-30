@@ -3,14 +3,26 @@ import time
 import tensorflow as tf
 from tensorflow.keras import models, layers
 from sklearn.metrics import classification_report, confusion_matrix
+from pathlib import Path
+import sys
 
-IMG_SIZE = (224, 224)
-BATCH_SIZE = 32
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from config import (
+    BATCH_SIZE,
+    IMAGE_SIZE,
+    MOBILENET_LABELS_PATH,
+    MOBILENET_MODEL_PATH,
+    TEST_DIR as CONFIG_TEST_DIR,
+    TRAIN_AUGMENTED_DIR,
+    VALIDATION_DIR,
+)
+
+IMG_SIZE = IMAGE_SIZE
 EPOCHS = 6
 
-TRAIN_DIR = '../data/train_augmented'
-VAL_DIR = '../data/validation'
-TEST_DIR = '../data/test'
+TRAIN_DIR = str(TRAIN_AUGMENTED_DIR)
+VAL_DIR = str(VALIDATION_DIR)
+TEST_DIR = str(CONFIG_TEST_DIR)
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
     TRAIN_DIR,
@@ -85,7 +97,7 @@ model = models.Sequential([
 # Compile 
 model.compile(
     optimizer="adam",
-    loss="categorical_crossentropy",
+    loss="sparse_categorical_crossentropy",
     metrics=["accuracy"]
 )
 
@@ -111,4 +123,8 @@ test_loss, test_accuracy = model.evaluate(test_ds, verbose=2)
 print(f"Test Loss: {test_loss:.4f}")
 print(f"Test accuracy: {test_accuracy:.4f}")
 
-
+MOBILENET_MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+model.save(MOBILENET_MODEL_PATH)
+MOBILENET_LABELS_PATH.write_text("\n".join(class_names), encoding="utf-8")
+print(f"Saved model: {MOBILENET_MODEL_PATH}")
+print(f"Saved labels: {MOBILENET_LABELS_PATH}")

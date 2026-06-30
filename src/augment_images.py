@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import sys
 
 from PIL import Image
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from config import TRAIN_AUGMENTED_DIR, TRAIN_DIR
 from preprocessing import IMAGE_EXTENSIONS, create_augmented_images
 
 
@@ -14,12 +17,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--source",
-        default="data/train",
+        default=str(TRAIN_DIR),
         help="Class-folder dataset to augment. Usually data/train.",
     )
     parser.add_argument(
         "--output",
-        default="data/train_augmented",
+        default=str(TRAIN_AUGMENTED_DIR),
         help="Directory where original and augmented images are saved.",
     )
     parser.add_argument(

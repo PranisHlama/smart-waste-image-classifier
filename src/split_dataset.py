@@ -4,17 +4,19 @@ import argparse
 import random
 import shutil
 from pathlib import Path
+import sys
 
 
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from config import DATA_DIR, IMAGE_DIR, IMAGE_EXTENSIONS
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Split class-folder image dataset into train/validation/test folders."
     )
-    parser.add_argument("--source", default="data/images", help="Source class-folder directory.")
-    parser.add_argument("--output", default="data", help="Directory where split folders are created.")
+    parser.add_argument("--source", default=str(IMAGE_DIR), help="Source class-folder directory.")
+    parser.add_argument("--output", default=str(DATA_DIR), help="Directory where split folders are created.")
     parser.add_argument("--train", type=float, default=0.70, help="Training split ratio.")
     parser.add_argument("--validation", type=float, default=0.15, help="Validation split ratio.")
     parser.add_argument("--test", type=float, default=0.15, help="Test split ratio.")

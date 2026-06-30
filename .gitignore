@@ -42,3 +42,7 @@ models/img/
 Thumbs.db
 .vscode/
 .idea/
+
+guideline.md
+models/cnn_labels.txt
+models/mobilenet_labels.txt
